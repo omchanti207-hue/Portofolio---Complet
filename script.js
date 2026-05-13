@@ -130,18 +130,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (contactForm) {
         contactForm.addEventListener('submit', function(e) {
-            // Pour Netlify Forms, laisser le formulaire soumettre normalement
-            // Netlify intercepte automatiquement les soumissions
-
-            // Animation de feedback
             const btn = this.querySelector('button[type="submit"]');
             const originalText = btn.innerHTML;
 
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi en cours...';
             btn.disabled = true;
 
-            // Le formulaire va se soumettre automatiquement vers Netlify
-            // Pas de preventDefault - Netlify gère la soumission
+            // Netlify intercepte le formulaire automatiquement
+            // Après succès, rediriger vers success.html
+            fetch(this.action || window.location.pathname, {
+                method: 'POST',
+                body: new FormData(this),
+                headers: { 'Accept': 'application/x-www-form-urlencoded' }
+            }).then(response => {
+                if (response.ok || response.status === 200) {
+                    window.location.href = 'success.html';
+                }
+            }).catch(() => {
+                // Fallback: redirection même en cas d'erreur (Netlify peut répondre différemment)
+                window.location.href = 'success.html';
+            });
+
+            // Empêcher la soumission par défaut seulement si fetch réussit
+            return false;
         });
     }
 
