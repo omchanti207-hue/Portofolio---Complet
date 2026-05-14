@@ -25,19 +25,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Fermer le menu
+    const closeMenu = () => {
+        navMenu.classList.remove('show-menu');
+        document.body.style.overflow = '';
+    };
+
     if (navClose) {
-        navClose.addEventListener('click', () => {
-            navMenu.classList.remove('show-menu');
-            document.body.style.overflow = '';
-        });
+        navClose.addEventListener('click', closeMenu);
     }
 
     // Fermer le menu lors du clic sur un lien
     navLinks.forEach(link => {
-        link.addEventListener('click', () => {
-            navMenu.classList.remove('show-menu');
-            document.body.style.overflow = '';
-        });
+        link.addEventListener('click', closeMenu);
     });
 
     // ==================== HEADER SCROLL EFFET ====================
@@ -88,8 +87,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const animateSkillBars = () => {
         skillBars.forEach(bar => {
-            const progress = bar.style.getPropertyValue('--progress');
-            bar.style.width = progress;
+            // Lire la valeur de la variable CSS --progress
+            const progress = getComputedStyle(bar).getPropertyValue('--progress');
+            if (progress) {
+                bar.style.width = progress;
+            }
         });
     };
 
@@ -102,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     animateSkillBars();
                 }
             });
-        }, { threshold: 0.3 });
+        }, { threshold: 0.2 });
 
         observer.observe(skillsSection);
     }
